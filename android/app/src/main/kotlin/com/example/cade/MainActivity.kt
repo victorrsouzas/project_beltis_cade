@@ -1,4 +1,4 @@
-package com.example.cade
+package com.example.caed
 
 import io.flutter.embedding.android.FlutterActivity
 
