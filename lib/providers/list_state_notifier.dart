@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 
-// StateNotifier que gerencia o estado da lista de pacotes usando AsyncValue
 class PackageListNotifier extends StateNotifier<AsyncValue<List<Package>>> {
   PackageListNotifier() : super(const AsyncValue.loading());
 
@@ -25,19 +24,17 @@ class PackageListNotifier extends StateNotifier<AsyncValue<List<Package>>> {
         state = AsyncValue.data(
             fetchedPackages); // Verifique se isso está sendo chamado
       } else {
-        // Atualiza o estado para erro
         state =
             AsyncValue.error('Erro ao carregar os pacotes', StackTrace.current);
       }
     } catch (e) {
       developer.log('Error fetching packages: $e');
-      // Atualiza o estado para erro com StackTrace
+
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
 }
 
-// Provider para o estado da lista de pacotes usando AsyncValue
 final packageListProvider =
     StateNotifierProvider<PackageListNotifier, AsyncValue<List<Package>>>(
         (ref) {

@@ -111,12 +111,9 @@ class ListPageState extends ConsumerState<ListPage> {
               ),
             ),
 
-            // Barra de navegação inferior
             BottomNavigationBar(
               currentIndex: 0,
-              onTap: (index) {
-                // Atualize a navegação conforme o índice
-              },
+              onTap: (index) {},
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),

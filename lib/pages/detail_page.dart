@@ -1,4 +1,5 @@
 import 'package:caed/providers/detail_state_notifier.dart';
+import 'package:caed/widgets/details_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,43 +12,60 @@ class DetailPage extends ConsumerStatefulWidget {
 
 class _DetailPageState extends ConsumerState<DetailPage> {
   @override
-  void initState() {
-    super.initState();
-    // Não modifique o estado aqui.
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Pega o pacote selecionado diretamente dos argumentos da rota
     final String package = ModalRoute.of(context)?.settings.arguments as String;
 
-    // Aqui você pode chamar o provider de forma segura, após o build ser chamado
     Future.microtask(() {
       ref.read(packageDetailProvider.notifier).setPackageDetails(package);
     });
 
-    // Obter o estado atual do pacote
     final packageState = ref.watch(packageDetailProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalhes do Pacote'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              packageState.packageName,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(packageState.packageName),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Status'),
+              Tab(text: 'Dados'),
+            ],
+          ),
+        ),
+        body: packageState.packageName.isNotEmpty
+            ? Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TabBarView(
+                        children: [
+                          buildStatusView(packageState.events),
+                          const Center(child: Text('Dados do Pacote')),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const Center(child: CircularProgressIndicator()),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 0,
+          onTap: (index) {},
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Início',
             ),
-            const SizedBox(height: 20),
-            Text(
-              packageState.packageDetails,
-              style: const TextStyle(fontSize: 16),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Opções',
             ),
-            // Adicionar mais detalhes relevantes conforme necessário
+            BottomNavigationBarItem(
+              icon: Icon(Icons.info_outline),
+              label: 'Tutoriais',
+            ),
           ],
         ),
       ),

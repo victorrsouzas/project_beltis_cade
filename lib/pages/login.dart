@@ -1,4 +1,5 @@
 import 'package:caed/providers/login_state_notifier.dart';
+import 'package:caed/utils/servico_navegacao.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +28,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Imagem de fundo (parte superior)
                   Container(
                     width: screenWidth,
                     height: screenHeight * 0.3,
@@ -48,7 +48,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Formulário de login
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Form(
@@ -146,8 +145,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           ),
-
-          // Botão de login fixado no rodapé com InkWell
           Consumer(
             builder: (context, ref, child) {
               return InkWell(
@@ -163,9 +160,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     });
                     if (!mounted) return;
                     if (isAuthenticated) {
-                      Navigator.of(context).pushNamed('/List');
+                      Navigator.of(
+                              ServicoNavegacao.navigatorKey.currentContext!)
+                          .pushNamed('/List');
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      ScaffoldMessenger.of(
+                              ServicoNavegacao.navigatorKey.currentContext!)
+                          .showSnackBar(
                         const SnackBar(content: Text('Login inválido')),
                       );
                     }
@@ -174,7 +175,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                   width: double.infinity,
-                  color: Colors.yellow, // Cor amarela do rodapé
+                  color: Colors.yellow,
                   child: Center(
                     child: _isLoading
                         ? const CircularProgressIndicator()

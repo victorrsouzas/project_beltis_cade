@@ -12,7 +12,6 @@ class LoginState {
     required this.isAuthenticated,
   });
 
-  // Método para copiar o estado e modificar valores específicos
   LoginState copyWith(
       {String? email, String? password, bool? isAuthenticated}) {
     return LoginState(
@@ -23,7 +22,6 @@ class LoginState {
   }
 }
 
-// Login StateNotifier para gerenciar o estado do login
 class LoginNotifier extends StateNotifier<LoginState> {
   LoginNotifier()
       : super(LoginState(email: '', password: '', isAuthenticated: false));
@@ -37,13 +35,11 @@ class LoginNotifier extends StateNotifier<LoginState> {
   }
 
   Future<bool> authenticate() async {
-    await Future.delayed(
-        const Duration(milliseconds: 500)); // Simula um delay de rede
+    await Future.delayed(const Duration(milliseconds: 500));
     return state.email == 'teste@teste.com' && state.password == '123456';
   }
 }
 
-// Criando o provider
 final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
   return LoginNotifier();
 });
