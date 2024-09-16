@@ -28,21 +28,18 @@ class LoginNotifier extends StateNotifier<LoginState> {
   LoginNotifier()
       : super(LoginState(email: '', password: '', isAuthenticated: false));
 
-  // Função para atualizar o email
   void setEmail(String email) {
     state = state.copyWith(email: email);
   }
 
-  // Função para atualizar a senha
   void setPassword(String password) {
     state = state.copyWith(password: password);
   }
 
-  // Função para autenticar (mock)
-  void authenticate() {
-    if (state.email == 'teste@teste.com' && state.password == '123456') {
-      state = state.copyWith(isAuthenticated: true);
-    }
+  Future<bool> authenticate() async {
+    await Future.delayed(
+        const Duration(milliseconds: 500)); // Simula um delay de rede
+    return state.email == 'teste@teste.com' && state.password == '123456';
   }
 }
 

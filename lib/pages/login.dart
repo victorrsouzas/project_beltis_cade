@@ -10,12 +10,13 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    final loginState = ref.watch(loginProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -47,83 +48,98 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Campos de login
+                  // Formulário de login
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: screenWidth * 0.9,
-                          child: const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Usuário',
-                              style: TextStyle(
-                                color: Color(0xFF757575),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: screenWidth * 0.9,
+                            child: const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Usuário',
+                                style: TextStyle(
+                                  color: Color(0xFF757575),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                            labelText: '',
-                            labelStyle: const TextStyle(color: Colors.grey),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
-                            ),
+                          const SizedBox(
+                            height: 20,
                           ),
-                          onChanged: (value) {
-                            // Atualizar o email no LoginNotifier
-                            ref.read(loginProvider.notifier).setEmail(value);
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: screenWidth * 0.9,
-                          child: const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Senha',
-                              style: TextStyle(
-                                color: Color(0xFF757575),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: '',
+                              labelStyle: const TextStyle(color: Colors.grey),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, insira seu usuário';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              ref.read(loginProvider.notifier).setEmail(value);
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: screenWidth * 0.9,
+                            child: const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Senha',
+                                style: TextStyle(
+                                  color: Color(0xFF757575),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                            labelText: '',
-                            labelStyle: const TextStyle(color: Colors.grey),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
-                            ),
+                          const SizedBox(
+                            height: 20,
                           ),
-                          obscureText: true,
-                          onChanged: (value) {
-                            // Atualizar a senha no LoginNotifier
-                            ref.read(loginProvider.notifier).setPassword(value);
-                          },
-                        ),
-                      ],
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: '',
+                              labelStyle: const TextStyle(color: Colors.grey),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, insira sua senha';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              ref
+                                  .read(loginProvider.notifier)
+                                  .setPassword(value);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -132,35 +148,48 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
 
           // Botão de login fixado no rodapé com InkWell
-          InkWell(
-            onTap: () {
-              ref.read(loginProvider.notifier).authenticate();
-
-              // Verificar se o login foi bem-sucedido
-              if (loginState.isAuthenticated) {
-                // Navegar para a lista de pacotes se autenticado
-                Navigator.of(context).pushNamed('/List');
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Login inválido')),
-                );
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              width: double.infinity,
-              color: Colors.yellow, // Cor amarela do rodapé
-              child: const Center(
-                child: Text(
-                  'Entrar',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+          Consumer(
+            builder: (context, ref, child) {
+              return InkWell(
+                onTap: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    bool isAuthenticated =
+                        await ref.read(loginProvider.notifier).authenticate();
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    if (!mounted) return;
+                    if (isAuthenticated) {
+                      Navigator.of(context).pushNamed('/List');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Login inválido')),
+                      );
+                    }
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  width: double.infinity,
+                  color: Colors.yellow, // Cor amarela do rodapé
+                  child: Center(
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text(
+                            'Entrar',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),
