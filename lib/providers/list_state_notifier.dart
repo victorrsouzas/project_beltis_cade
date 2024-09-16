@@ -1,48 +1,12 @@
 import 'dart:convert';
+import 'package:caed/models/package.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 
-class Package {
-  final String id;
-  final String status;
-  final int received;
-  final int pending;
-
-  Package({
-    required this.id,
-    required this.status,
-    required this.received,
-    required this.pending,
-  });
-
-  factory Package.fromJson(Map<String, dynamic> json) {
-    return Package(
-      id: json['id'],
-      status: json['status'],
-      received: json['progress']['received'],
-      pending: json['progress']['pending'],
-    );
-  }
-}
-
-class ListState {
-  final List<Package> packages;
-
-  ListState({
-    required this.packages,
-  });
-
-  ListState copyWith({List<Package>? packages}) {
-    return ListState(
-      packages: packages ?? this.packages,
-    );
-  }
-}
-
-// StateNotifier que gerencia o estado da lista de pacotes
-class PackageListNotifier extends StateNotifier<ListState> {
-  PackageListNotifier() : super(ListState(packages: []));
+// StateNotifier que gerencia o estado da lista de pacotes usando AsyncValue
+class PackageListNotifier extends StateNotifier<AsyncValue<List<Package>>> {
+  PackageListNotifier() : super(const AsyncValue.loading());
 
   // Função para buscar pacotes da API mock
   Future<void> fetchPackages() async {
@@ -57,19 +21,25 @@ class PackageListNotifier extends StateNotifier<ListState> {
         List<Package> fetchedPackages =
             jsonData.map((item) => Package.fromJson(item)).toList();
 
-        // Atualiza o estado com os pacotes recebidos da API
-        state = state.copyWith(packages: fetchedPackages);
+        // Atualiza o estado para data (sucesso) com os pacotes recebidos
+        state = AsyncValue.data(
+            fetchedPackages); // Verifique se isso está sendo chamado
       } else {
-        throw Exception('Failed to load packages');
+        // Atualiza o estado para erro
+        state =
+            AsyncValue.error('Erro ao carregar os pacotes', StackTrace.current);
       }
     } catch (e) {
       developer.log('Error fetching packages: $e');
+      // Atualiza o estado para erro com StackTrace
+      state = AsyncValue.error(e, StackTrace.current);
     }
   }
 }
 
-// Provider para o estado da lista de pacotes
+// Provider para o estado da lista de pacotes usando AsyncValue
 final packageListProvider =
-    StateNotifierProvider<PackageListNotifier, ListState>((ref) {
+    StateNotifierProvider<PackageListNotifier, AsyncValue<List<Package>>>(
+        (ref) {
   return PackageListNotifier();
 });

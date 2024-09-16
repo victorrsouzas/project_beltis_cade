@@ -4,16 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:caed/providers/list_state_notifier.dart';
 
-class ListPage extends ConsumerWidget {
+class ListPage extends ConsumerStatefulWidget {
   const ListPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final packageState = ref.watch(packageListProvider);
-    final packageNotifier = ref.read(packageListProvider.notifier);
+  ListPageState createState() => ListPageState();
+}
 
-    // Buscar pacotes da API ao carregar a página
-    packageNotifier.fetchPackages();
+class ListPageState extends ConsumerState<ListPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Buscar pacotes uma única vez ao carregar a página
+    ref.read(packageListProvider.notifier).fetchPackages();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asyncPackageState = ref.watch(packageListProvider);
 
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -84,12 +92,22 @@ class ListPage extends ConsumerWidget {
 
             // TabBarView
             Expanded(
-              child: TabBarView(
-                children: [
-                  buildPackageList(context, packageState),
-                  const Center(child: Text('Status')),
-                  const Center(child: Text('Dados')),
-                ],
+              child: asyncPackageState.when(
+                data: (packages) {
+                  return TabBarView(
+                    children: [
+                      buildPackageList(context, packages),
+                      const Center(child: Text('Status')),
+                      const Center(child: Text('Dados')),
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+                error: (error, stack) => Center(
+                  child: Text('Erro ao carregar dados: $error'),
+                ),
               ),
             ),
 

@@ -1,11 +1,11 @@
-import 'package:caed/providers/list_state_notifier.dart';
+import 'package:caed/models/package.dart';
 import 'package:flutter/material.dart';
 
-Widget buildPackageList(BuildContext context, ListState packageState) {
+Widget buildPackageList(BuildContext context, List<Package> packageList) {
   return ListView.builder(
-    itemCount: packageState.packages.length,
+    itemCount: packageList.length,
     itemBuilder: (context, index) {
-      final package = packageState.packages[index];
+      final package = packageList[index];
 
       // Mock para cores das barras
       Color bar1Color = (index % 2 == 0) ? Colors.lightBlue : Colors.grey;
