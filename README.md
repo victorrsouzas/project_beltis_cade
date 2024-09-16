@@ -73,6 +73,15 @@ flutter run
 
 Você pode utilizar emuladores ou dispositivos físicos para testar o aplicativo.
 
+## Usuário e Senha
+
+Para executar o projeto, use o seguinte comando:
+
+```bash
+usuario: teste@teste.com
+senha: 123456
+```
+
 ## Integração com API
 
 O projeto utiliza a [Mocky API](https://run.mocky.io/) para simular dados de pacotes e seus eventos de status. A integração com a API foi feita no arquivo `detail_state_notifier.dart`, onde os dados da API são buscados e exibidos na tela de detalhes do pacote.
@@ -100,7 +109,7 @@ final response = await http.get(
 - A navegação entre "Status" e "Dados" é feita através de abas.
 
 ### Versão APK para baixar
-[APK](https://drive.google.com/file/d/1bogNglDncs5ojQWjSiF35Vhe0x4nrAN8/view?usp=sharing)
+[APK](https://drive.google.com/file/d/1j_MLxNIPIB4-KILmL2mwXByWBiQ-qYe2/view?usp=sharing)
 
 ## Licença
 
